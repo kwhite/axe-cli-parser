@@ -1,4 +1,4 @@
-# axe-cli-parser
+# axe-sitemap-parser
 
 This app is used for parsing sitemap urls and test the accessibility.
 
@@ -6,7 +6,7 @@ This app is used for parsing sitemap urls and test the accessibility.
 
 First download the package:
 
-npm install axe-cli-parser --save
+npm install axe-sitemap-parser --save
 
 ## How to use it!
 

@@ -37,10 +37,19 @@ var parseUrl = (function () {
                         {   
                             fs.mkdirSync(folderpath);                           
                         }
+                    
+                    var counter = sites.sites.length;
+                  
                     Array.prototype.forEach.call(sites.sites, site => {                       
                         ExecuteCommand(site, driver);                       
-                        driver.manage().timeouts().setScriptTimeout(10000);                       
+                        driver.manage().timeouts().setScriptTimeout(10000);
+                        counter -= 1;          
                     });
+                    
+                    if(counter === 0)
+                    {
+                        driver.quit();
+                    }
                 })
                 .catch(function (error) {
                     driver.quit();
@@ -76,11 +85,11 @@ var parseUrl = (function () {
                              })
                              console.log('The process has been finished. \n');                                                                                   
                         });                  
-                })                            
+                })                                    
                   .catch(function (error) {
                     driver.quit();
                     console.log(error);                   
-                });         
+                });              
         }
 
 

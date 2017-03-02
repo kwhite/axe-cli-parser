@@ -1,6 +1,9 @@
 {
-  "name": "axe-cli-parser",
-  "version": "1.1.1",
+  "name": "axe-sitemap-parser",
+  "engines": {
+	"node": ">=6.9.4"
+  },
+  "version": "1.1.5",
   "description": "Parse a sitemap and run axe-core for each url. The results are saved locally.",
   "main": "app.js",
   "scripts": {
