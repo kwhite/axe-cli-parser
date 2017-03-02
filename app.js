@@ -1,14 +1,18 @@
+var argv = require('yargs').argv;
+var AxeBuilder = require('axe-webdriverjs');
+var webdriver = require('selenium-webdriver');
+var chrome = require('selenium-webdriver/chrome');
+var path = require('chromedriver').path;
+var Sitemapper = require('sitemapper');
+var fs = require('fs');
+ var folderpath = './results/';
+ 
 var parseUrl = (function () {
 
     var instance;
 
     function init(sitemapUrl) {
-        var AxeBuilder = require('axe-webdriverjs');
-        var webdriver = require('selenium-webdriver');
-        var chrome = require('selenium-webdriver/chrome');
-        var path = require('chromedriver').path;
-        var Sitemapper = require('sitemapper');
-        var fs = require('fs');
+
 
         sitemapUrl = sitemapUrl || {};
 
@@ -29,9 +33,13 @@ var parseUrl = (function () {
 
             sitemap.fetch()
                 .then(function (sites) {
-                    Array.prototype.forEach.call(sites.sites, site => {
-                        ExecuteCommand(site, driver);
-                        driver.manage().timeouts().setScriptTimeout(10000);
+                     if(!fs.existsSync(folderpath))
+                        {   
+                            fs.mkdirSync(folderpath);                           
+                        }
+                    Array.prototype.forEach.call(sites.sites, site => {                       
+                        ExecuteCommand(site, driver);                       
+                        driver.manage().timeouts().setScriptTimeout(10000);                       
                     });
                 })
                 .catch(function (error) {
@@ -39,32 +47,41 @@ var parseUrl = (function () {
                     console.log(error);
                 });
         }
+        
+        function buildUrlName(url) {
+            var pattern = RegExp("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
 
-        // generate a random id used for creating the json files.
-         function makeid() {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-            for (var i = 0; i < 5; i++)
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-            return text;
+            var matches = url.match(pattern);
+            return {
+                scheme: matches[2],
+                authority: matches[4],
+                path: matches[5],
+                query: matches[7],
+                fragment: matches[9]
+            };
         }
 
         // executes the axe analyzer for a specific url
         function ExecuteCommand(url, driver) {
             driver
                 .get(url)
-                .then(function () {
+                .then(function () {                    
                     AxeBuilder(driver)
                         .analyze(function (results) {
-                            console.log(results);
-                            var filepath = './results/results-';                                              
-                            fs.writeFile(filepath.concat(makeid()).concat('.json'), JSON.stringify(results, null, 2), 'utf-8');
-                        });
-                });
-            console.log('test5');
-        }      
+                            console.log('Checking Url:' , url, '\n');                            
+                            var urlpath = buildUrlName(url).path.replace(/\//g, "-");                           
+                            fs.writeFile(folderpath.concat(urlpath.substring(1, urlpath.length-1)).concat('.json'), JSON.stringify(results, null, 2), 'utf-8');
+                            Array.prototype.forEach.call(results.violations, description => {
+                                 console.log('Violation Messages: ',description.description , '\n');   
+                             })
+                             console.log('The process has been finished. \n');                                                                                   
+                        });                  
+                })                            
+                  .catch(function (error) {
+                    driver.quit();
+                    console.log(error);                   
+                });         
+        }
 
 
         return {
@@ -86,10 +103,13 @@ var parseUrl = (function () {
     };
 })();
 
+if (argv.sitemapUrl) {
+    var parser = parseUrl.getInstance(argv.sitemapUrl);
+    parser.parseSitemap();
+}
 module.exports = {
-    axeParser : function(sitemapUrl)
-    {
+    axeParser: function (sitemapUrl) {
         var parser = parseUrl.getInstance(sitemapUrl);
         parser.parseSitemap();
-    } 
+    }
 };
