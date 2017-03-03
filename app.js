@@ -5,8 +5,8 @@ var chrome = require('selenium-webdriver/chrome');
 var path = require('chromedriver').path;
 var Sitemapper = require('sitemapper');
 var fs = require('fs');
- var folderpath = './results/';
- 
+var folderpath = './results/';
+
 var parseUrl = (function () {
 
     var instance;
@@ -45,7 +45,7 @@ var parseUrl = (function () {
                         driver.manage().timeouts().setScriptTimeout(10000);
                         counter -= 1;          
                     });
-                    
+
                     if(counter === 0)
                     {
                         driver.quit();

@@ -4,6 +4,7 @@ This app is used for parsing sitemap urls and test the accessibility.
 
 ## Getting started
 
+Install Node.js if you haven't already. This project requires Node 6+.
 First download the package:
 
 npm install axe-sitemap-parser --save
@@ -12,7 +13,7 @@ npm install axe-sitemap-parser --save
 
 The app can be used in two ways.
 
-You can call it directly from the folder where is isntalled with the following commmand: node app.js --sitemapUrl='your sitemap url'
+You can call it directly from the folder where is installed with the following commmand: node app.js --sitemapUrl='your sitemap url'
 
 Using gulp and require attribute to acces the exported function.
 	
